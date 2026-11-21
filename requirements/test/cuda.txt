@@ -3,9 +3,9 @@
 --index-url https://pypi.org/simple
 --extra-index-url https://download.pytorch.org/whl/cu132
 
-abi3info==2025.11.29 \
-    --hash=sha256:75343a1d3eb662db4e20fe057fcd7bfc5b66e25aa6abf9cf5e90f70014151ebe \
-    --hash=sha256:dd96754872211f96ed6955d47e725bdc579e581dd1705d581923270f825d1318
+abi3info==2026.9.25 \
+    --hash=sha256:bfca7d2845517c15cee1ae5c4be0d4803070ac6837e9b0c4da1317b72b64dbc9 \
+    --hash=sha256:d5cbf46f358a4e0cafa171572adb67e5dce14a1b316e3c9f577234dbafcd5214
     # via torch-abi-audit
 absl-py==2.1.0 \
     --hash=sha256:526a04eadab8b4ee719ce68f204172ead1027549089702d99b9059f129ff1308 \
