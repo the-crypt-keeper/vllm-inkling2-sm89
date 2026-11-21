@@ -15,7 +15,7 @@ class Inkling2DSparkSpeculatorConfig(DSparkSpeculatorConfig):
     @classmethod
     def adapt_draft_model_config(cls, spec: "SpeculativeConfig") -> None:
         super().adapt_draft_model_config(spec)
-        if current_platform.is_device_capability_family(120):
+        if current_platform.is_device_capability_family(120) or current_platform.is_device_capability(89):
             # The target's clipped, unit-scale FP8 cache does not describe the
             # draft's unnormalized values. Keep the draft cache in BF16.
             if spec.kv_cache_dtype is None:

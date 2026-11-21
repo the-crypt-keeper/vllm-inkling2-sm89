@@ -17,6 +17,7 @@ from vllm.models.inkling.nvidia.ops.fa4_rel_attention import (
     bucket_max_seqlen_q,
 )
 from vllm.triton_utils import gl, gluon, tl, tldevice, triton
+from vllm.models.inkling2.nvidia.ops.pdl import gdc_wait, PDL
 from vllm.utils.platform_utils import num_compute_units
 from vllm.utils.torch_utils import kv_cache_dtype_str_to_dtype
 
@@ -285,7 +286,7 @@ def _gate_sink_kernel(
     D: tl.constexpr,
     BLOCK: tl.constexpr,
 ):
-    tl.extra.cuda.gdc_wait()
+    gdc_wait()
     row = tl.program_id(0).to(tl.int64)
     col = tl.program_id(1) * BLOCK + tl.arange(0, BLOCK)
     mask = col < H * D
@@ -333,7 +334,7 @@ def gate_sink(
         width // num_heads,
         512,
         enable_fp_fusion=False,
-        launch_pdl=True,
+        launch_pdl=PDL,
     )
 
 
@@ -466,7 +467,7 @@ def _rel_decode_combine_kernel(
         # gate and sink are ready.
         gate = tl.load(Gate + row * stride_gate + head * D + offs_d).to(tl.float32)
         sink = tl.load(Sink + row * stride_sink + head).to(tl.float32)
-    tl.extra.cuda.gdc_wait()
+    gdc_wait()
     y_ptrs = Y + row * H * D + head * D + offs_d
     if row >= num_actual_tokens:
         tl.store(y_ptrs, tl.zeros([BLOCK_D], tl.float32))
@@ -1295,7 +1296,7 @@ def _decode_attention(
         BLOCK_D=block_d,
         GATED=not draft,
         num_warps=num_warps,
-        launch_pdl=True,
+        launch_pdl=PDL,
     )
 
 
@@ -1377,5 +1378,5 @@ def _launch_rel_verify(
         DRAFT=draft,
         WINDOW=window,
         num_warps=4,
-        launch_pdl=True,
+        launch_pdl=PDL,
     )
